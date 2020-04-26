@@ -2,6 +2,9 @@ const {createServer} = require('http');
 const app = require('express')();
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const mongoose = require('mongoose');
+const credentials = require('./credentials');
+const conn = mongoose.createConnection(credentials.uri);
 
 const server = createServer(app);
 
@@ -18,10 +21,12 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
     console.log('connected');
     socket.on('subscribe', room => {
+       console.log('subscribe', room);
        socket.join(room);
        io.to(room).emit('entered');
     });
     socket.on('unsubscribe', room => {
+        console.log('unsubscribe', room);
         socket.join(room);
         io.to(room).emit('left');
     });
@@ -31,7 +36,7 @@ app.post('/emit/:room/:message', (req, res) => {
     console.log({
         room: req.params.room,
         event: req.params.message,
-    })
+    });
    io.to(req.params.room).emit(req.params.message, req.body)
    res.send({
       test: true
