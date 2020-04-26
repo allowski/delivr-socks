@@ -45,6 +45,11 @@ io.on('connection', (socket) => {
 });
 
 app.post('/emit/:room/:message', async (req, res) => {
+    if(!credentials.api_keys.includes(req.headers.authorization)){
+        return res.status(401).send({
+            error: 'Unauthorized'
+        });
+    }
     console.log({
         room: req.params.room,
         event: req.params.message,
@@ -56,6 +61,12 @@ app.post('/emit/:room/:message', async (req, res) => {
 });
 
 app.post('/shorten', async (req, res) => {
+
+    if(!credentials.api_keys.includes(req.headers.authorization)){
+        return res.status(401).send({
+            error: 'Unauthorized'
+        });
+    }
     while(true) {
         const shorten = new shortlink({
             fullurl: req.body.url,
