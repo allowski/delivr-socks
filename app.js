@@ -6,6 +6,9 @@ const mongoose = require('mongoose');
 const credentials = require('./credentials');
 const conn = mongoose.createConnection(credentials.uri);
 
+const shortlink = conn.model('shortlink', require('./models/shortlink'));
+const message = conn.model('message', require('./models/message'));
+
 const server = createServer(app);
 
 const io = require('socket.io')(server);
@@ -42,5 +45,7 @@ app.post('/emit/:room/:message', (req, res) => {
       test: true
    });
 });
+
+app.get('/:short');
 
 server.listen(3000);
